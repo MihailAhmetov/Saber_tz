@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using tz_saber.Exceptions;
+
 
 namespace tz_saber
 {    public struct NodeInfo
@@ -38,21 +38,10 @@ namespace tz_saber
                 }
                 else if (b == ',' && readNode)
                     readNode = false;
-                else if (b == -1)
-                    throw new UnexpectedEndException();
                 else if (b == ']')
                     break;
-                else
-                    throw new UnexpectedCharException((char)b);
             }
             FillList(listToDeserialize, nodeInfos);
-        }
-
-        private static void CheckStreamBeginning(FileStream fileStreamToCheck)
-        {
-            int firstByte = fileStreamToCheck.ReadByte();
-            if (firstByte == -1 || firstByte != '[')
-                throw new EmptyStreamException();
         }
 
         private static void FillList(ListRand listToRestore, List<NodeInfo> nodeInfos)
@@ -74,8 +63,6 @@ namespace tz_saber
                     nodeInfo.Node.Prev = nodeInfos[int.Parse(nodeInfo.Prev)].Node;
                 if (nodeInfo.Rand != "null")
                     nodeInfo.Node.Rand = nodeInfos[int.Parse(nodeInfo.Rand)].Node;
-                if (nodeInfos.Count > 1 && nodeInfo.Node.Next == null && nodeInfo.Node.Prev == null)
-                    throw new UnconnectedNodeException();
             }
         }
 
@@ -105,8 +92,6 @@ namespace tz_saber
             while (true)
             {
                 int b = fileStream.ReadByte();
-                if (b == -1)
-                    throw new UnexpectedEndException();
 
                 if ((char)b == stopChar)
                     break;
